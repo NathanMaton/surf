@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windsurf Game</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(to bottom, #87CEEB, #1E90FF);
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            color: white;
+            padding: 20px;
+        }
+        canvas {
+            border: 3px solid #ffffff;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+        #score {
+            font-size: 32px;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .instructions {
+            background: rgba(0,0,0,0.6);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            max-width: 600px;
+            text-align: center;
+        }
+        .instructions h2 {
+            margin-top: 0;
+            color: #FFD700;
+        }
+        .key {
+            background: #ffffff;
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin: 0 5px;
+            font-weight: bold;
+        }
+        .game-container {
+            position: relative;
+        }
+        #gameStatus {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            background: rgba(0,0,0,0.7);
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="instructions">
+        <h2>🏄 Windsurf Challenge 🌊</h2>
+        <p>Use <span class="key">←</span> and <span class="key">→</span> arrow keys to balance on the waves</p>
+        <p>Stay on the waves as long as possible to score points!</p>
+        <p>Don't fall into the water or you'll have to start over!</p>
+    </div>
+    <div id="score">Score: 0</div>
+    <div class="game-container">
+        <canvas id="gameCanvas"></canvas>
+        <div id="gameStatus"></div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
