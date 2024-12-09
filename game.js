@@ -132,7 +132,7 @@ function drawSurfer() {
     const scale = surfer.height / 50; // Scale factor for pixel art
     
     // Draw legs (bent for surfing pose)
-    ctx.fillStyle = '#1E90FF'; // Blue shorts
+    ctx.fillStyle = '#FFE4C4'; // Skin tone
     ctx.beginPath();
     ctx.moveTo(-5 * scale, -15 * scale);
     ctx.quadraticCurveTo(-8 * scale, -10 * scale, -6 * scale, -5 * scale);
@@ -147,18 +147,38 @@ function drawSurfer() {
     ctx.lineTo(0, -15 * scale);
     ctx.fill();
 
-    // Draw torso
-    ctx.fillStyle = '#FF6B6B'; // Red rashguard
+    // Draw bikini bottom
+    ctx.fillStyle = '#FF1493'; // Hot pink
     ctx.beginPath();
-    ctx.moveTo(-6 * scale, -30 * scale);
-    ctx.lineTo(6 * scale, -30 * scale);
+    ctx.moveTo(-5 * scale, -15 * scale);
+    ctx.lineTo(5 * scale, -15 * scale);
+    ctx.lineTo(3 * scale, -13 * scale);
+    ctx.lineTo(-3 * scale, -13 * scale);
+    ctx.closePath();
+    ctx.fill();
+
+    // Draw torso (skin tone)
+    ctx.fillStyle = '#FFE4C4';
+    ctx.beginPath();
+    ctx.moveTo(-5 * scale, -30 * scale);
+    ctx.lineTo(5 * scale, -30 * scale);
     ctx.lineTo(4 * scale, -15 * scale);
     ctx.lineTo(-4 * scale, -15 * scale);
     ctx.closePath();
     ctx.fill();
 
+    // Draw bikini top
+    ctx.fillStyle = '#FF1493';
+    ctx.beginPath();
+    ctx.moveTo(-5 * scale, -25 * scale);
+    ctx.lineTo(5 * scale, -25 * scale);
+    ctx.lineTo(5 * scale, -22 * scale);
+    ctx.lineTo(-5 * scale, -22 * scale);
+    ctx.closePath();
+    ctx.fill();
+
     // Draw arms in dynamic surfing pose
-    ctx.fillStyle = '#FF6B6B';
+    ctx.fillStyle = '#FFE4C4';
     // Back arm
     ctx.beginPath();
     ctx.moveTo(-4 * scale, -28 * scale);
@@ -181,17 +201,30 @@ function drawSurfer() {
     ctx.arc(0, -33 * scale, 4 * scale, 0, Math.PI * 2);
     ctx.fill();
 
-    // Draw hair
-    ctx.fillStyle = '#8B4513'; // Brown hair
+    // Draw long hair
+    ctx.fillStyle = '#FFD700'; // Blonde hair
     ctx.beginPath();
     ctx.arc(0, -34 * scale, 4 * scale, Math.PI, Math.PI * 2);
     ctx.fill();
     
-    // Add face direction (small black dot for eye)
+    // Add flowing hair effect
+    ctx.beginPath();
+    ctx.moveTo(-4 * scale, -34 * scale);
+    ctx.quadraticCurveTo(-8 * scale, -30 * scale, -6 * scale, -25 * scale);
+    ctx.lineTo(-4 * scale, -26 * scale);
+    ctx.quadraticCurveTo(-6 * scale, -30 * scale, -3 * scale, -33 * scale);
+    ctx.fill();
+    
+    // Add face details
     ctx.fillStyle = '#000000';
+    // Eye
     ctx.beginPath();
     ctx.arc(2 * scale, -33 * scale, 0.5 * scale, 0, Math.PI * 2);
     ctx.fill();
+    // Smile
+    ctx.beginPath();
+    ctx.arc(1 * scale, -32 * scale, 1.5 * scale, 0, Math.PI);
+    ctx.stroke();
 
     ctx.restore();
 
@@ -303,7 +336,6 @@ function resetGame() {
     surfer.speedY = 0;
     surfer.angle = 0;
     surfer.balance = 0;
-    score = 0;
     
     // Reset difficulty
     difficulty.waveSpeed = BASE_WAVE_SPEED;
@@ -316,11 +348,19 @@ function resetGame() {
     
     const gameStatus = document.getElementById('gameStatus');
     gameStatus.style.display = 'block';
-    gameStatus.textContent = 'Game Over! Press any key to restart';
+    
+    // Show final score and name input
+    finalScore.textContent = `Final Score: ${score}`;
+    nameInput.style.display = 'block';
+    submitScore.style.display = 'block';
+    restartText.textContent = '';
     
     const restartHandler = (e) => {
-        gameStatus.style.display = 'none';
-        document.removeEventListener('keydown', restartHandler);
+        if (nameInput.style.display === 'none') {
+            gameStatus.style.display = 'none';
+            score = 0;
+            document.removeEventListener('keydown', restartHandler);
+        }
     };
     document.addEventListener('keydown', restartHandler);
 }
@@ -348,6 +388,59 @@ function gameLoop() {
     
     requestAnimationFrame(gameLoop);
 }
+
+// Add leaderboard variables
+const nameInput = document.getElementById('nameInput');
+const submitScore = document.getElementById('submitScore');
+const leaderboardEntries = document.getElementById('leaderboardEntries');
+const finalScore = document.getElementById('finalScore');
+const restartText = document.getElementById('restartText');
+const MAX_LEADERBOARD_ENTRIES = 10;
+
+// Load leaderboard from localStorage
+let leaderboard = JSON.parse(localStorage.getItem('surfLeaderboard')) || [];
+
+function updateLeaderboardDisplay() {
+    leaderboardEntries.innerHTML = '';
+    leaderboard.sort((a, b) => b.score - a.score);
+    
+    leaderboard.slice(0, MAX_LEADERBOARD_ENTRIES).forEach((entry, index) => {
+        const div = document.createElement('div');
+        div.className = 'leaderboard-entry';
+        if (entry.isLatest) {
+            div.classList.add('highlight');
+            delete entry.isLatest;
+        }
+        div.innerHTML = `
+            <span>${index + 1}. ${entry.name}</span>
+            <span>${entry.score}</span>
+        `;
+        leaderboardEntries.appendChild(div);
+    });
+}
+
+function addToLeaderboard(name, score) {
+    const entry = { name, score, isLatest: true };
+    leaderboard.push(entry);
+    leaderboard.sort((a, b) => b.score - a.score);
+    leaderboard = leaderboard.slice(0, MAX_LEADERBOARD_ENTRIES);
+    localStorage.setItem('surfLeaderboard', JSON.stringify(leaderboard));
+    updateLeaderboardDisplay();
+}
+
+submitScore.addEventListener('click', () => {
+    const name = nameInput.value.trim();
+    if (name) {
+        addToLeaderboard(name, score);
+        nameInput.style.display = 'none';
+        submitScore.style.display = 'none';
+        restartText.textContent = 'Press any key to restart';
+        nameInput.value = '';
+    }
+});
+
+// Initialize leaderboard display
+updateLeaderboardDisplay();
 
 // Start the game
 gameLoop();

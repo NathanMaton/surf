@@ -56,10 +56,57 @@
             left: 50%;
             transform: translate(-50%, -50%);
             font-size: 24px;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.8);
             padding: 20px;
             border-radius: 10px;
             display: none;
+            text-align: center;
+        }
+        #nameInput {
+            margin: 10px 0;
+            padding: 5px;
+            font-size: 18px;
+            border-radius: 5px;
+            border: none;
+            text-align: center;
+        }
+        #submitScore {
+            background: #FFD700;
+            color: #333;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        #submitScore:hover {
+            background: #FFC000;
+        }
+        #leaderboard {
+            position: fixed;
+            right: 20px;
+            top: 20px;
+            background: rgba(0,0,0,0.8);
+            padding: 20px;
+            border-radius: 10px;
+            min-width: 200px;
+        }
+        #leaderboard h2 {
+            margin-top: 0;
+            color: #FFD700;
+            text-align: center;
+        }
+        .leaderboard-entry {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            padding: 5px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+        }
+        .leaderboard-entry.highlight {
+            background: rgba(255,215,0,0.3);
         }
     </style>
 </head>
@@ -73,7 +120,16 @@
     <div id="score">Score: 0</div>
     <div class="game-container">
         <canvas id="gameCanvas"></canvas>
-        <div id="gameStatus"></div>
+        <div id="gameStatus">
+            <div id="finalScore"></div>
+            <input type="text" id="nameInput" placeholder="Enter your name" maxlength="15" style="display: none;">
+            <button id="submitScore" style="display: none;">Submit Score</button>
+            <div id="restartText"></div>
+        </div>
+    </div>
+    <div id="leaderboard">
+        <h2>🏆 Top Surfers</h2>
+        <div id="leaderboardEntries"></div>
     </div>
     <script src="game.js"></script>
 </body>
